@@ -1351,7 +1351,7 @@ class NetlinkAddressMonitor(NetworkAddressMonitor):
             
             if (ifa_flags & IFA_F_DEPRECATED):
                 # Treat deprecated address like removal
-                h_type = RTM_DELADDR
+                h_type = self.RTM_DELADDR
 
             logger.debug('RTM new/del addr family: {} flags: {} scope: {} idx: {}'.format(
                          ifa_family, ifa_flags, ifa_scope, ifa_idx))
