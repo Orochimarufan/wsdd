@@ -1344,10 +1344,14 @@ class NetlinkAddressMonitor(NetworkAddressMonitor):
             # decode ifaddrmsg as in rtnetlink.h
             ifa_family, _, ifa_flags, ifa_scope, ifa_idx = struct.unpack_from('@BBBBI', buf, offset)
             if ((ifa_flags & IFA_F_DADFAILED) or (ifa_flags & IFA_F_HOMEADDRESS)
-                    or (ifa_flags & IFA_F_DEPRECATED) or (ifa_flags & IFA_F_TENTATIVE)):
+                    or (ifa_flags & IFA_F_TENTATIVE)):
                 logger.debug('ignore address with invalid state {}'.format(hex(ifa_flags)))
                 offset += align_to(msg_len, NLM_HDR_ALIGNTO)
                 continue
+            
+            if (ifa_flags & IFA_F_DEPRECATED):
+                # Treat deprecated address like removal
+                h_type = self.RTM_DELADDR
 
             logger.debug('RTM new/del addr family: {} flags: {} scope: {} idx: {}'.format(
                          ifa_family, ifa_flags, ifa_scope, ifa_idx))
